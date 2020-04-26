@@ -4,6 +4,7 @@ import { Request, Response } from "express";
 import db from '../db/connect';
 import uploads from '../uploads/uploads';
 import downloads from '../downloads/download';
+import displayAd from '../advertise/advertize-query';
 import * as cors from 'cors';
 
 const options: cors.CorsOptions = {
@@ -33,9 +34,6 @@ class JRoutes {
     }
 
     private routes(): void {
-
-
-
         this.router.get('/', (req: Request, res: Response) => {
             res.status(200).send({
                 message: 'Hello World!'
@@ -74,6 +72,10 @@ class JRoutes {
 
         this.router.post('/downloads', cors(), (req: Request, res: Response) => {
             downloads.downloads(req, res);
+        });
+
+        this.router.post('/display-ad', cors(), (req: Request, res: Response) => {
+            displayAd.getUserAd(req, res);
         });
 
 

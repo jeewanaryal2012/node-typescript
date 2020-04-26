@@ -11,34 +11,19 @@ class DBConnect {
             database: 'blog'
         });
     }
+    getConnection() {
+        return this.connection;
+    }
     connect(): Observable<any> {
         const observable = new Observable(subscriber => {
 
             this.connection.connect((err) => {
                 if (err) throw err;
-                subscriber.next("connected");
+                subscriber.next(this.connection);
             });
         });
 
         return observable;
-        /*
-        const connection = mysql.createConnection({
-            host: 'localhost',
-            user: 'root',
-            password: '',
-            database: 'blog'
-        });
-        connection.connect((err) => {
-            if (err) throw err;
-            console.log('Connected!');
-        });
-        connection.query('SELECT * FROM authors', (err, rows) => {
-            if (err) throw err;
-
-            console.log('Data received from Db:');
-            console.log(rows);
-        });
-        */
     }
     getUsers(): Observable<any> {
         const observable = new Observable(subscriber => {
