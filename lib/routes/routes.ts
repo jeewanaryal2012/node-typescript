@@ -7,13 +7,17 @@ import downloads from '../downloads/download';
 import displayAd from '../advertise/advertize-query';
 import * as cors from 'cors';
 
+import * as jwt from 'jsonwebtoken';
+
 const options: cors.CorsOptions = {
     allowedHeaders: ["*"],
-    credentials: false,
+    credentials: true,
     methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
     origin: "*",
-    preflightContinue: false
+    preflightContinue: true
 };
+
+const accessTokenSecret = 'youraccesstokensecret';
 
 
 class JRoutes {
@@ -45,10 +49,13 @@ class JRoutes {
             // query a database and save data
             res.status(200).send(data);
         });
-        this.router.get('/login', (req: Request, res: Response) => {
-            const data = req.body;
-            // query a database and save data
-            res.status(200).send('test is ... from routes');
+        this.router.post('/login', (req: Request, res: Response) => {
+            const accessToken = jwt.sign({ username: 'jeewanaryal', role: 'manager' }, accessTokenSecret);
+            res.json({
+                username: 'jeewanaryal',
+                role: 'manager',
+                accessToken
+            });
         });
 
         this.router.get('/db', (req: Request, res: Response) => {
@@ -71,11 +78,17 @@ class JRoutes {
         });
 
         this.router.post('/downloads', cors(), (req: Request, res: Response) => {
+            console.log(req.headers);
             downloads.downloads(req, res);
         });
 
         this.router.post('/display-ad', cors(), (req: Request, res: Response) => {
+            //console.log(req);
             displayAd.getUserAd(req, res);
+        });
+
+        this.router.get('/test', (req: Request, res: Response) => {
+
         });
 
 
