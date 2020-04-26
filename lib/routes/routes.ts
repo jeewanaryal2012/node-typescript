@@ -3,10 +3,11 @@ import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 import db from '../db/connect';
 import uploads from '../uploads/uploads';
+import downloads from '../downloads/download';
 import * as cors from 'cors';
 
 const options: cors.CorsOptions = {
-    allowedHeaders: ["Origin", "X-Requested-With", "Content-Type", "Accept", "X-Access-Token"],
+    allowedHeaders: ["*"],
     credentials: false,
     methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
     origin: "*",
@@ -67,8 +68,12 @@ class JRoutes {
         });
 
         this.router.post('/uploads', cors(), uploads.upload.single('image'), (req: Request, res: Response) => {
-            //uploads.uploadAds(req, res);
-            console.log('routing');
+            uploads.uploadAds(req, res);
+            //console.log('routing');
+        });
+
+        this.router.post('/downloads', cors(), (req: Request, res: Response) => {
+            downloads.downloads(req, res);
         });
 
 
