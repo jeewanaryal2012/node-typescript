@@ -8,10 +8,29 @@ class Download {
     constructor() { }
 
     downloads(req, res) {
-        let filepath = path.join(__dirname, '../../uploads') + '/' + 'images.jpeg';
-        res.sendFile(filepath);
+
         // listings.listing('');
         // res.json([{ test: 'listing' }]);
+        this.getFiles().subscribe(data => {
+            res.sendFile(data);
+        }, err => { })
+    }
+
+    getFiles() {
+        const observable = new Observable(subscriber => {
+            let fileName = '';
+
+            fs.readdir(path.join(__dirname, '../../uploads'), function (err, files) {
+                files.forEach(function (file) {
+                    let max = files.length - 1, min = 1;
+                    let ran = Math.floor(Math.random() * (max - min + 1)) + min;
+                    fileName = files[ran];
+
+                });
+                subscriber.next(path.join(__dirname, '../../uploads') + '/' + fileName);
+            });
+        });
+        return observable;
     }
 }
 
