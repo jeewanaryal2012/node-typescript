@@ -9,10 +9,13 @@ import * as cors from 'cors';
 
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
+import * as bcrypt from 'bcryptjs';
+import register from '../login-register/register';
+//import * as login from '../login-register/login';
 
 const options: cors.CorsOptions = {
     allowedHeaders: ["*"],
-    credentials: true,
+    credentials: false,
     methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
     origin: "*",
     preflightContinue: true
@@ -52,7 +55,13 @@ class JRoutes {
             res.status(200).send(data);
         });
         this.router.post('/login', (req: Request, res: Response) => {
-            console.log(process.env.AUTH_KEY, req.body);
+            //console.log(process.env.AUTH_KEY, req.body);
+            var hash = bcrypt.hashSync(req.body.password, 10);
+            console.log(hash);
+            bcrypt.compare(req.body.password, hash, (err, res) => {
+                console.log(res);
+            });
+
             const user = { username: req.body.username, password: req.body.password };
             const accessToken = jwt.sign(user, process.env.AUTH_KEY);
             res.json({
@@ -62,10 +71,14 @@ class JRoutes {
             });
         });
 
+        this.router.post('/register', (req: Request, res: Response) => {
+            console.log("register here");
+            new register(req, res).register(req, res);
+        });
+
         this.router.get('/db', (req: Request, res: Response) => {
-            db.connect().subscribe(res => {
-                console.log(res);
-            }, err => { });
+            //let reg = new register();
+            //new register().register(req, res);
         });
 
         this.router.get('/users', (req: Request, res: Response) => {
@@ -104,7 +117,9 @@ class JRoutes {
         });
 
         this.router.get('/test', (req: Request, res: Response) => {
-
+            res.json([{
+                message: "test"
+            }]);
         });
 
 

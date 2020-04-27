@@ -8,7 +8,7 @@ class DBConnect {
             host: 'localhost',
             user: 'root',
             password: '',
-            database: 'blog'
+            database: 'cvd'
         });
     }
     getConnection() {
@@ -38,6 +38,10 @@ class DBConnect {
             }, err => { });
         });
         return observable;
+    }
+
+    disconnet() {
+        this.connection.end();
     }
 }
 
