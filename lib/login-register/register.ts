@@ -31,6 +31,7 @@ export default class Register {
 
                     } else {
                         res.json({
+                            registered: true,
                             message: "Successfuly registered"
                         });
                     }
