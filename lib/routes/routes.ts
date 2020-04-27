@@ -52,10 +52,11 @@ class JRoutes {
             res.status(200).send(data);
         });
         this.router.post('/login', (req: Request, res: Response) => {
-            console.log(process.env.AUTH_KEY);
-            const accessToken = jwt.sign({ username: 'jeewanaryal', role: 'manager' }, process.env.AUTH_KEY);
+            console.log(process.env.AUTH_KEY, req.body);
+            const user = { username: req.body.username, password: req.body.password };
+            const accessToken = jwt.sign(user, process.env.AUTH_KEY);
             res.json({
-                username: 'jeewanaryal',
+                userName: req.body.username,
                 role: 'manager',
                 accessToken
             });
