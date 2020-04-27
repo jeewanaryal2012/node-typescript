@@ -2,6 +2,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 //import * as cors from 'cors';
+
 var cors = require('cors');
 class App {
 
