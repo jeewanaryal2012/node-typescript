@@ -23,7 +23,7 @@ export default class Register {
             "lastName": req.body.lastName,
             "email": req.body.email,
             "phone": req.body.phone,
-            "password": req.body.password
+            "password": bcrypt.hashSync(req.body.password, 10) //req.body.password
         };
         this.connection.query('SELECT COUNT(*) AS cnt FROM users WHERE email = ?', this.req.body.email, (error, results, fields) => {
             console.log(results[0].cnt);

@@ -11,6 +11,7 @@ import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcryptjs';
 import register from '../login-register/register';
+import login from '../login-register/login';
 //import * as login from '../login-register/login';
 
 const options: cors.CorsOptions = {
@@ -55,20 +56,21 @@ class JRoutes {
             res.status(200).send(data);
         });
         this.router.post('/login', (req: Request, res: Response) => {
+            new login().login(req, res);
             //console.log(process.env.AUTH_KEY, req.body);
-            var hash = bcrypt.hashSync(req.body.password, 10);
-            console.log(hash);
-            bcrypt.compare(req.body.password, hash, (err, res) => {
-                console.log(res);
-            });
+            // var hash = bcrypt.hashSync(req.body.password, 10);
+            // console.log(hash);
+            // bcrypt.compare(req.body.password, hash, (err, res) => {
+            //     console.log(res);
+            // });
 
-            const user = { username: req.body.username, password: req.body.password };
-            const accessToken = jwt.sign(user, process.env.AUTH_KEY);
-            res.json({
-                userName: req.body.username,
-                role: 'manager',
-                accessToken
-            });
+            // const user = { username: req.body.username, password: req.body.password };
+            // const accessToken = jwt.sign(user, process.env.AUTH_KEY);
+            // res.json({
+            //     userName: req.body.username,
+            //     role: 'manager',
+            //     accessToken
+            // });
         });
 
         this.router.post('/register', (req: Request, res: Response) => {
