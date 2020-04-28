@@ -75,6 +75,9 @@ class JRoutes {
             console.log("register here");
             new register(req, res).register(req, res);
         });
+        this.router.post('/user-exists', (req: Request, res: Response) => {
+            new register(req, res).userExists(req, res);
+        });
 
         this.router.get('/db', (req: Request, res: Response) => {
             //let reg = new register();
