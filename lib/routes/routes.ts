@@ -6,6 +6,7 @@ import uploads from '../uploads/uploads';
 import downloads from '../downloads/download';
 import displayAd from '../advertise/advertize-query';
 import * as cors from 'cors';
+import interceptor from '../interceptor/interceptor';
 
 import * as jwt from 'jsonwebtoken';
 import * as dotenv from 'dotenv';
@@ -23,6 +24,11 @@ const options: cors.CorsOptions = {
 };
 
 const accessTokenSecret = 'youraccesstokensecret';
+const LoggerMiddleware = (req, res, next) => {
+    //console.log(`Logged  ${req.url}  ${req.method} -- ${new Date()}`)
+    console.log(req.headers['authorization'], req.method);
+    next();
+}
 
 
 class JRoutes {
@@ -30,6 +36,10 @@ class JRoutes {
     constructor() {
         dotenv.config();
         this.app = express();
+        //interceptor.intercept(this.app);
+        //this.app.use(LoggerMiddleware);
+        this.app.use(cors(options));
+
         //this.router = express.Router();
         this.router.use(cors(options));
         this.config();
@@ -84,6 +94,9 @@ class JRoutes {
         this.router.get('/db', (req: Request, res: Response) => {
             //let reg = new register();
             //new register().register(req, res);
+            res.json({
+                message: 'login expired'
+            });
         });
 
         this.router.get('/users', (req: Request, res: Response) => {
@@ -121,7 +134,7 @@ class JRoutes {
             displayAd.getUserAd(req, res);
         });
 
-        this.router.get('/test', (req: Request, res: Response) => {
+        this.router.get('/test', interceptor.isAuth, (req: Request, res: Response) => {
             res.json([{
                 message: "test"
             }]);
@@ -130,6 +143,17 @@ class JRoutes {
 
         this.app.use('/', this.router)
 
+    }
+
+    isAuth(req, res, next) {
+        let x = 't';
+        if (x === 'tb') {
+            return next();
+        } else {
+            res.json({
+                message: 'login exp'
+            });
+        }
     }
 
 }
