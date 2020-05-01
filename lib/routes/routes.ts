@@ -26,7 +26,6 @@ const options: cors.CorsOptions = {
 const accessTokenSecret = 'youraccesstokensecret';
 const LoggerMiddleware = (req, res, next) => {
     //console.log(`Logged  ${req.url}  ${req.method} -- ${new Date()}`)
-    console.log(req.headers['authorization'], req.method);
     next();
 }
 
@@ -67,24 +66,9 @@ class JRoutes {
         });
         this.router.post('/login', (req: Request, res: Response) => {
             new login().login(req, res);
-            //console.log(process.env.AUTH_KEY, req.body);
-            // var hash = bcrypt.hashSync(req.body.password, 10);
-            // console.log(hash);
-            // bcrypt.compare(req.body.password, hash, (err, res) => {
-            //     console.log(res);
-            // });
-
-            // const user = { username: req.body.username, password: req.body.password };
-            // const accessToken = jwt.sign(user, process.env.AUTH_KEY);
-            // res.json({
-            //     userName: req.body.username,
-            //     role: 'manager',
-            //     accessToken
-            // });
         });
 
         this.router.post('/register', (req: Request, res: Response) => {
-            console.log("register here");
             new register(req, res).register(req, res);
         });
         this.router.post('/user-exists', (req: Request, res: Response) => {
@@ -102,35 +86,28 @@ class JRoutes {
         this.router.get('/users', (req: Request, res: Response) => {
             //res.send('users...');
             db.getUsers().subscribe(data => {
-                console.log(res);
                 res.json(data)
             }, err => { });
         });
 
         this.router.post('/uploads', cors(), uploads.upload.single('image'), (req: Request, res: Response) => {
             uploads.uploadAds(req, res);
-            //console.log('routing');
         });
 
         this.router.post('/downloads', cors(), (req: Request, res: Response) => {
             let token = req.headers["authorization"];
             jwt.verify(token, process.env.AUTH_KEY, (err, decoded) => {
                 if (err) {
-                    console.log('Unauthorized');
                     return res.status(401).json({
                         message: "Unauthorized!"
                     });
                 } else {
-                    console.log('authorized');
                     downloads.downloads(req, res);
                 }
             });
-            // console.log(req.headers);
-            // downloads.downloads(req, res);
         });
 
         this.router.post('/display-ad', cors(), (req: Request, res: Response) => {
-            //console.log(req);
             displayAd.getUserAd(req, res);
         });
 

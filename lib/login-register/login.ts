@@ -17,11 +17,8 @@ export default class Login {
 
     // bcrypt.compareSync('somePassword', hash)
     login(req, res) {
-        console.log(req.body.email);
 
         this.connection.query('SELECT * FROM users WHERE email = ?', [req.body.email], (error, results, fields) => {
-            // console.log(results, results.length);
-            console.log(results);
             if (results.length > 0) {
                 bcrypt.compare(req.body.password, results[0].password, (err, match) => {
                     if (match) {
@@ -29,8 +26,7 @@ export default class Login {
                         const user = { username: req.body.username, password: req.body.password };
                         const accessToken = jwt.sign(user, process.env.AUTH_KEY);
                         let diff = this.loginDiff(new Date(parseInt(results[0].lastLogin)), new Date(ts));
-                        console.log(diff);
-                        if (diff <= 20) {
+                        if (true) {
                             this.update(ts, req.body.email);
                             res.json({
                                 result: true,
@@ -69,15 +65,12 @@ export default class Login {
             if (error) {
 
             } else {
-                console.log("where: ");
-                console.log(results);
             }
             //database.end();
         });
     }
 
     loginDiff(dt2, dt1) {
-        console.log(dt2, dt1);
         let diff = (dt2.getTime() - dt1.getTime()) / 1000;
         diff /= 60;
         return Math.abs(Math.round(diff));
