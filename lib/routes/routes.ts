@@ -13,6 +13,7 @@ import * as dotenv from 'dotenv';
 import * as bcrypt from 'bcryptjs';
 import register from '../login-register/register';
 import login from '../login-register/login';
+import UserProfile from '../user/user-profile';
 //import * as login from '../login-register/login';
 
 const options: cors.CorsOptions = {
@@ -121,6 +122,20 @@ class JRoutes {
             res.send({
                 message: 'OK'
             });
+        });
+
+        this.router.post('/user-profile', this.isAuth, (req: Request, res: Response) => {
+            let userProfile = new UserProfile();
+            userProfile.getUserProfile(req.body.email).subscribe(up => {
+                res.json({
+                    userProfileId: up[0].userProfileId,
+                    profilePicture: up[0].profilePicture,
+                    email: up[0].email,
+                    result: true,
+                    userName: req.body.email,
+                    accessToken: req.headers['authorization']
+                });
+            }, err => { });
         });
 
 
