@@ -3,6 +3,7 @@ import * as bcrypt from 'bcryptjs';
 import { Observable } from 'rxjs';
 import { Request, Response } from "express";
 import * as jwt from 'jsonwebtoken';
+import UserProfile from '../user/user-profile';
 
 export default class Login {
     req: Request;
@@ -27,14 +28,26 @@ export default class Login {
                         const accessToken = jwt.sign(user, process.env.AUTH_KEY);
                         let diff = this.loginDiff(new Date(parseInt(results[0].lastLogin)), new Date(ts));
                         if (true) {
-                            this.update(ts, req.body.email);
-                            res.json({
-                                result: true,
-                                userName: req.body.email,
-                                role: 'manager',
-                                timestamp: ts,
-                                accessToken
-                            });
+                            let userProfile = new UserProfile();
+                            userProfile.getUserProfile(req.body.email).subscribe(up => {
+                                console.log(up);
+                                res.json({
+                                    userProfileId: up[0].userProfileId,
+                                    profilePicture: up[0].profilePicture,
+                                    email: up[0].email,
+                                    result: true,
+                                    userName: req.body.email,
+                                    accessToken
+                                });
+                            }, err => { });
+                            // this.update(ts, req.body.email);
+                            // res.json({
+                            //     result: true,
+                            //     userName: req.body.email,
+                            //     role: 'manager',
+                            //     timestamp: ts,
+                            //     accessToken
+                            // });
                         } else {
                             res.json([{
                                 result: false
