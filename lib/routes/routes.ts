@@ -50,6 +50,7 @@ class JRoutes {
     private config(): void {
         this.app.use(bodyParser.json());
         this.app.use(bodyParser.urlencoded({ extended: false }));
+        this.app.use('/uploads', express.static(process.env.PWD + '/uploads'));
     }
 
     private routes(): void {
@@ -116,6 +117,12 @@ class JRoutes {
                 message: 'OK authorized'
             });
         });
+        this.router.get('/uploads', (req: Request, res: Response) => {
+            res.send({
+                message: 'OK'
+            });
+        });
+
 
 
         this.app.use('/', this.router)

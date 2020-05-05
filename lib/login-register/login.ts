@@ -4,6 +4,8 @@ import { Observable } from 'rxjs';
 import { Request, Response } from "express";
 import * as jwt from 'jsonwebtoken';
 import UserProfile from '../user/user-profile';
+import * as fs from 'fs';
+import * as path from 'path';
 
 export default class Login {
     req: Request;
@@ -30,7 +32,10 @@ export default class Login {
                         if (true) {
                             let userProfile = new UserProfile();
                             userProfile.getUserProfile(req.body.email).subscribe(up => {
-                                console.log(up);
+                                console.log(process.env.PWD + '/uploads/default/profile-default.png');
+                                //console.log(fs.readFileSync(process.env.PWD + '/uploads/default/profile-default.png'));
+                                let bitmap = fs.readFileSync(process.env.PWD + '/uploads/default/profile-default.png');
+                                let prof = new Buffer(bitmap).toString('base64');
                                 res.json({
                                     userProfileId: up[0].userProfileId,
                                     profilePicture: up[0].profilePicture,
