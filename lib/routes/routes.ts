@@ -111,10 +111,10 @@ class JRoutes {
             displayAd.getUserAd(req, res);
         });
 
-        this.router.get('/test', interceptor.isAuth, (req: Request, res: Response) => {
-            res.json([{
-                message: "test"
-            }]);
+        this.router.get('/test', this.isAuth, (req: Request, res: Response) => {
+            res.send({
+                message: 'OK authorized'
+            });
         });
 
 
@@ -123,14 +123,16 @@ class JRoutes {
     }
 
     isAuth(req, res, next) {
-        let x = 't';
-        if (x === 'tb') {
-            return next();
-        } else {
-            res.json({
-                message: 'login exp'
-            });
-        }
+        jwt.verify(req.headers['authorization'], process.env.AUTH_KEY, (err, verifiedJwt) => {
+            console.log(err, verifiedJwt);
+            if (err) {
+                res.send({
+                    message: 'unauthorized'
+                });
+            } else {
+                next();
+            }
+        });
     }
 
 }
