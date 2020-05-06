@@ -29,8 +29,10 @@ export default class Register {
             "firstName": req.body.firstName,
             "lastName": req.body.lastName,
             "email": req.body.email,
+            "gender": req.body.gender,
             "phone": req.body.phone,
             "password": bcrypt.hashSync(req.body.password, 10),
+            "isMember": 0,
             "lastLogin": Date.now(),
             "uuid": uuidCalculated
         };
