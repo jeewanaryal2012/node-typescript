@@ -16,15 +16,12 @@ export default class Register {
     }
 
     register(req, res) {
-        console.log(req.body);
-
         //let connection = db.getConnection();
         let uniqueId = uuid().split('-')
         let uId = uuid();
         let splitted = uId.split('-');
         let truncated = splitted[splitted.length - 1];
         let uuidCalculated = `${Date.now()}${truncated}`;
-        console.log(uuidCalculated);
         var users = {
             "firstName": req.body.firstName,
             "lastName": req.body.lastName,
@@ -37,7 +34,6 @@ export default class Register {
             "uuid": uuidCalculated
         };
         this.connection.query('SELECT COUNT(*) AS cnt FROM users WHERE email = ?', this.req.body.email, (error, results, fields) => {
-            console.log(results[0].cnt);
             if (results[0].cnt === 0) {
                 this.connection.query('INSERT INTO users SET ?', users, (error, results, fields) => {
                     if (error) {

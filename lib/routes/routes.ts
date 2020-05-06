@@ -2,7 +2,7 @@ import * as express from "express";
 import * as bodyParser from "body-parser";
 import { Request, Response } from "express";
 import db from '../db/connect';
-import uploads from '../uploads/uploads';
+import Uploads from '../uploads/uploads';
 import downloads from '../downloads/download';
 import displayAd from '../advertise/advertize-query';
 import * as cors from 'cors';
@@ -34,6 +34,8 @@ const LoggerMiddleware = (req, res, next) => {
 
 class JRoutes {
     router = express.Router();
+    userProfile = new UserProfile();
+    uploads = new Uploads();
     constructor() {
         dotenv.config();
         this.app = express();
@@ -93,8 +95,8 @@ class JRoutes {
             }, err => { });
         });
 
-        this.router.post('/uploads', cors(), uploads.upload.single('image'), (req: Request, res: Response) => {
-            uploads.uploadAds(req, res);
+        this.router.post('/uploads', cors(), this.uploads.upload.single('image'), (req: Request, res: Response) => {
+            this.uploads.uploadAds(req, res);
         });
 
         this.router.post('/downloads', cors(), (req: Request, res: Response) => {
@@ -115,7 +117,6 @@ class JRoutes {
         });
 
         this.router.get('/test', this.isAuth, (req: Request, res: Response) => {
-            console.log(uuid());
             res.send({
                 message: 'OK authorized'
             });
@@ -127,8 +128,8 @@ class JRoutes {
         });
 
         this.router.post('/user-profile', this.isAuth, (req: Request, res: Response) => {
-            let userProfile = new UserProfile();
-            userProfile.getUserProfile(req.body.email).subscribe((up: any) => {
+            //let userProfile = new UserProfile();
+            this.userProfile.getUserProfile(req.body.email).subscribe((up: any) => {
                 if (up.length > 0) {
                     res.json({
                         userProfileId: up[0].userProfileId,
@@ -144,6 +145,10 @@ class JRoutes {
             }, err => { });
         });
 
+        this.router.post('/user-profile-picture', this.isAuth, cors(), this.uploads.upload.single('image'), (req: Request, res: Response) => {
+            this.userProfile.uploadProfilePicture(req, res);
+        });
+
 
 
         this.app.use('/', this.router)
@@ -152,7 +157,6 @@ class JRoutes {
 
     isAuth(req, res, next) {
         jwt.verify(req.headers['authorization'], process.env.AUTH_KEY, (err, verifiedJwt) => {
-            console.log(err, verifiedJwt);
             if (err) {
                 res.send({
                     message: 'unauthorized'

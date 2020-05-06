@@ -3,11 +3,13 @@ import * as bcrypt from 'bcryptjs';
 import { Observable } from 'rxjs';
 import { Request, Response } from "express";
 import * as jwt from 'jsonwebtoken';
+import Uploads from '../uploads/uploads';
 
 export default class UserProfile {
     req: Request;
     res: Response;
     connection: any;
+    uploads = new Uploads();
 
     constructor() {
         // this.req = req;
@@ -28,5 +30,9 @@ export default class UserProfile {
             //}, err => { });
         });
         return observable;
+    }
+
+    uploadProfilePicture(req, res) {
+        this.uploads.uploadProfilePicture(req, res);
     }
 }
