@@ -14,6 +14,7 @@ import * as bcrypt from 'bcryptjs';
 import register from '../login-register/register';
 import login from '../login-register/login';
 import UserProfile from '../user/user-profile';
+import { v4 as uuid } from 'uuid';
 //import * as login from '../login-register/login';
 
 const options: cors.CorsOptions = {
@@ -114,6 +115,7 @@ class JRoutes {
         });
 
         this.router.get('/test', this.isAuth, (req: Request, res: Response) => {
+            console.log(uuid());
             res.send({
                 message: 'OK authorized'
             });
@@ -126,15 +128,19 @@ class JRoutes {
 
         this.router.post('/user-profile', this.isAuth, (req: Request, res: Response) => {
             let userProfile = new UserProfile();
-            userProfile.getUserProfile(req.body.email).subscribe(up => {
-                res.json({
-                    userProfileId: up[0].userProfileId,
-                    profilePicture: up[0].profilePicture,
-                    email: up[0].email,
-                    result: true,
-                    userName: req.body.email,
-                    accessToken: req.headers['authorization']
-                });
+            userProfile.getUserProfile(req.body.email).subscribe((up: any) => {
+                if (up.length > 0) {
+                    res.json({
+                        userProfileId: up[0].userProfileId,
+                        profilePicture: up[0].profilePicture,
+                        email: up[0].email,
+                        result: true,
+                        userName: req.body.email,
+                        accessToken: req.headers['authorization']
+                    });
+                } else {
+                    res.json({});
+                }
             }, err => { });
         });
 
