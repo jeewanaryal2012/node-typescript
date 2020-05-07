@@ -34,10 +34,11 @@ export default class Uploads {
                         fileName += el;
                     }
                 });
+                let dateNow = Date.now();
                 //console.log(fileName, fileExtention, req.headers);
                 // let fileName = `${file.originalname}${Math.floor(Math.random() * 1000000)}`;
                 //Math.floor(Math.random() * 1000000);
-                const finalFileName = `profile-${userEmail}.${fileExtention}`;
+                const finalFileName = `profile-${userEmail}-${dateNow}.${fileExtention}`;
                 cb(null, finalFileName);
             }
         });
@@ -79,11 +80,18 @@ export default class Uploads {
                 if (file === userEmail) {
                     fs.readdir(path.join(process.env.PWD, './uploads/tmp/' + file), (err, f) => {
                         //res.sendFile(process.env.PWD + '/uploads/tmp/' + file + '/' + f[0]);
+                        console.log('----');
                         console.log(f);
+                        f.forEach((item, index) => {
+                            //console.log(process.env.PWD + './uploads/tmp/' + file);
+                            if (item === '10.jpeg') {
+                                fs.unlinkSync(process.env.PWD + '/uploads/tmp/' + file + '/10.jpeg');
+                            }
+                        });
                         let max = f.length - 1, min = 1;
                         let ran = Math.floor(Math.random() * (max - min + 1)) + min;
                         //const fName = f[0] === '.DS_Store' ? f[1] : f[0];
-                        const fName = f[ran];
+                        const fName = f[f.length - 2];
                         res.json({
                             profilePicture: 'http://localhost:4040' + '/uploads/tmp/' + file + '/' + fName
                         });
