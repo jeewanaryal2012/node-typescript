@@ -78,7 +78,15 @@ export default class Uploads {
             files.forEach((file, index) => {
                 if (file === userEmail) {
                     fs.readdir(path.join(process.env.PWD, './uploads/tmp/' + file), (err, f) => {
-                        res.sendFile(process.env.PWD + '/uploads/tmp/' + file + '/' + f[0]);
+                        //res.sendFile(process.env.PWD + '/uploads/tmp/' + file + '/' + f[0]);
+                        console.log(f);
+                        let max = f.length - 1, min = 1;
+                        let ran = Math.floor(Math.random() * (max - min + 1)) + min;
+                        //const fName = f[0] === '.DS_Store' ? f[1] : f[0];
+                        const fName = f[ran];
+                        res.json({
+                            profilePicture: 'http://localhost:4040' + '/uploads/tmp/' + file + '/' + fName
+                        });
                     });
                 }
             });
