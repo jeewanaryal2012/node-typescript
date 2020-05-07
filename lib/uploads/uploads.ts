@@ -1,6 +1,7 @@
 import * as multer from 'multer'
 import * as fs from 'fs';
 import db from '../db/connect';
+import * as path from 'path';
 
 const PATH = './uploads/tmp';
 
@@ -72,14 +73,16 @@ export default class Uploads {
     }
 
     uploadProfilePicture(req, res) {
-        let email = req.body.email;
-        this.connection.query('SELECT * FROM users WHERE email = ?',
-            [email], (error, results, fields) => {
-                // let profileDir = `./uploads/tmp/${results[0].uuid}`;
-                // if (!fs.existsSync(profileDir)) {
-                //     fs.mkdirSync(profileDir);
-                // }
+        const userEmail = req.headers['email'];
+        fs.readdir(path.join(process.env.PWD, './uploads/tmp'), (err, files) => {
+            files.forEach((file, index) => {
+                if (file === userEmail) {
+                    fs.readdir(path.join(process.env.PWD, './uploads/tmp/' + file), (err, f) => {
+                        res.sendFile(process.env.PWD + '/uploads/tmp/' + file + '/' + f[0]);
+                    });
+                }
             });
+        });
     }
 }
 
