@@ -11,10 +11,20 @@ export default class Uploads {
     constructor() {
         this.storage = multer.diskStorage({
             destination: (req, file, cb) => {
-                cb(null, PATH);
+                const userEmail = req.headers['email'];
+                let profileDir = `./uploads/tmp/${userEmail}`;
+                if (!fs.existsSync(profileDir)) {
+                    fs.mkdirSync(profileDir);
+                }
+                cb(null, profileDir);
             },
             filename: (req, file, cb) => {
-                console.log(file.originalname.split('.'));
+                //console.log(file.originalname.split('.'));
+                const userEmail = req.headers['email'];
+                // let profileDir = `./uploads/tmp/${userEmail}`;
+                // if (!fs.existsSync(profileDir)) {
+                //     fs.mkdirSync(profileDir);
+                // }
                 const splitted = file.originalname.split('.');
                 const fileExtention = splitted[splitted.length - 1];
                 let fileName = '';
@@ -23,9 +33,11 @@ export default class Uploads {
                         fileName += el;
                     }
                 });
-                console.log(fileName);
+                //console.log(fileName, fileExtention, req.headers);
                 // let fileName = `${file.originalname}${Math.floor(Math.random() * 1000000)}`;
-                // cb(null, fileName);
+                //Math.floor(Math.random() * 1000000);
+                const finalFileName = `profile-${userEmail}.${fileExtention}`;
+                cb(null, finalFileName);
             }
         });
         this.upload = multer({
@@ -63,10 +75,10 @@ export default class Uploads {
         let email = req.body.email;
         this.connection.query('SELECT * FROM users WHERE email = ?',
             [email], (error, results, fields) => {
-                let profileDir = `./uploads/tmp/${results[0].uuid}`;
-                if (!fs.existsSync(profileDir)) {
-                    fs.mkdirSync(profileDir);
-                }
+                // let profileDir = `./uploads/tmp/${results[0].uuid}`;
+                // if (!fs.existsSync(profileDir)) {
+                //     fs.mkdirSync(profileDir);
+                // }
             });
     }
 }

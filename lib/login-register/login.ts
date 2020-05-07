@@ -32,9 +32,9 @@ export default class Login {
                         if (true) {
                             let userProfile = new UserProfile();
                             userProfile.getUserProfile(req.body.email).subscribe(up => {
-                                console.log(process.env.PWD + '/uploads/default/profile-default.png');
+                                console.log(process.env.PWD + '/uploads/default/profile.jpeg');
                                 //console.log(fs.readFileSync(process.env.PWD + '/uploads/default/profile-default.png'));
-                                let bitmap = fs.readFileSync(process.env.PWD + '/uploads/default/profile-default.png');
+                                let bitmap = fs.readFileSync(process.env.PWD + '/uploads/default/profile.jpeg');
                                 let prof = new Buffer(bitmap).toString('base64');
                                 res.json({
                                     userProfileId: up[0].userProfileId,
