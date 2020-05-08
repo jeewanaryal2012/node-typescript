@@ -39,6 +39,13 @@ export default class Register {
                     if (error) {
                     } else {
                         this.updateUserProfile(users);
+                        const friendshipData = {
+                            email: users.email,
+                            uuidA: '',
+                            uuidB: '',
+                            status: 'n'
+                        };
+                        this.updateFriendList(friendshipData)
                         res.json({
                             registered: true,
                             message: "Successfuly registered"
@@ -74,6 +81,19 @@ export default class Register {
             email: users.email
         }
         this.connection.query('INSERT INTO userProfile SET ?', up, function (error, results, fields) {
+
+        });
+
+    }
+
+    updateFriendList(data) {
+        const fl = {
+            email: data.email,
+            uuidA: data.uuidA,
+            uuidB: data.uuidB,
+            status: data.status
+        };
+        this.connection.query('INSERT INTO friendList SET ?', fl, function (error, results, fields) {
 
         });
     }

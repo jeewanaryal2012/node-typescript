@@ -149,6 +149,15 @@ class JRoutes {
             this.userProfile.uploadProfilePicture(req, res);
         });
 
+        this.router.post('/all-user-profile', this.isAuth, (req: Request, res: Response) => {
+            this.userProfile.getAllUserProfile(req, res).subscribe(data => {
+                res.json({
+                    message: data
+                });
+            }, err => { });
+
+        });
+
 
 
         this.app.use('/', this.router)
