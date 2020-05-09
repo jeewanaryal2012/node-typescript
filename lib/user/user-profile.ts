@@ -47,11 +47,11 @@ export default class UserProfile {
                             FROM users u
                             INNER JOIN userProfile up USING (email)`;
 
-            this.connection.query(query, (err, rows) => {
+            this.connection.query(query, (err, users) => {
                 if (err) {
                     throw err;
                 } else {
-                    console.log(rows.length);
+                    //console.log(rows.length);
                     // let filtered = rows.filter((item, index) => {
                     //     return item.email !== currentUser;
                     // });
@@ -66,8 +66,8 @@ export default class UserProfile {
                     // }, []);
 
                     const friendListQuery = `SELECT * FROM friendList`;
-                    this.connection.query(friendListQuery, (err, flRow) => {
-                        const mapped = this.mapUserFriendList(rows, flRow, currentUser);
+                    this.connection.query(friendListQuery, (err, friendList) => {
+                        const mapped = this.mapUserFriendList(users, friendList, currentUser);
                         subscriber.next(mapped);
                     });
 
@@ -77,41 +77,24 @@ export default class UserProfile {
         return observable;
     } filteredArr
 
-    mapUserFriendList(arr, fList, currentUser) {
-        console.log(fList);
-        let result = [];
-        arr.forEach((el1, idx1) => {
-            fList.forEach((el2, idx2) => {
-                result.push({
-                    firstName: el1.firstName,
-                    lastName: el1.lastName,
-                    email: el1.email,
-                    gender: el1.gender,
-                    ismember: el1.isMember,
-                    lastLogin: el1.lastLogin,
-                    uuid: el2.uuidB,
-                    profilePicture: el1.profilePicture,
-                    uuidB: el2.uuidB,
-                    status: el1.uuid === el2.uuidB ? el2.status : 'n'
+    mapUserFriendList(users, friendList, currentUser) {
+        users.forEach((user, userIndex) => {
+            user.status = '';
+        });
 
+        friendList.forEach((fl, flIndex) => {
+            users.forEach((user, userIndex) => {
+                if (currentUser === fl.email) {
+                    if (user.email === fl.friend) {
+                        user.status = fl.status;
+                    } else {
+                        user.status = 'x';
+                    }
                 }
-                );
-                // if (el1.uuid === el2.uuidB) {
-
-                // }
             });
         });
-        let filtered = result.filter((item, index) => {
-            return item.email !== currentUser;
-        });
-        const filteredArr = filtered.reduce((acc, current) => {
-            const x = acc.find(item => item.email === current.email);
-            if (!x) {
-                return acc.concat([current]);
-            } else {
-                return acc;
-            }
-        }, []);
-        return filteredArr;
+
+        return users;
+
     }
 }
