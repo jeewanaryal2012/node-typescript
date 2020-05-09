@@ -43,7 +43,8 @@ export default class Register {
                             email: users.email,
                             uuidA: '',
                             uuidB: '',
-                            status: 'n'
+                            status: 'n',
+                            friend: ''
                         };
                         this.updateFriendList(friendshipData)
                         res.json({
@@ -91,7 +92,8 @@ export default class Register {
             email: data.email,
             uuidA: data.uuidA,
             uuidB: data.uuidB,
-            status: data.status
+            status: data.status,
+            friend: data.friend
         };
         this.connection.query('INSERT INTO friendList SET ?', fl, function (error, results, fields) {
 

@@ -1,6 +1,6 @@
 import db from '../db/connect';
 import * as bcrypt from 'bcryptjs';
-import { Observable } from 'rxjs';
+import { Observable, merge } from 'rxjs';
 import { Request, Response } from "express";
 import * as jwt from 'jsonwebtoken';
 import Uploads from '../uploads/uploads';
@@ -77,7 +77,7 @@ export default class UserProfile {
             });
         });
         return observable;
-    } filteredArr
+    }
 
     mapUserFriendList(users, friendList, currentUser) {
         users.forEach((user, userIndex) => {
@@ -139,7 +139,7 @@ export default class UserProfile {
         var a3 = Array.from(hash.values());
 
         const filteredArr = a3.filter((item, index) => {
-            return item.email !== currentUser;
+            return item.email !== currentUser && item.email !== '';
         });
 
         return [
@@ -147,5 +147,59 @@ export default class UserProfile {
             { friends: friends }
         ];
 
+    }
+
+    friendRequest(req, res) {
+        /*
+        INSERT INTO friendList values (13, 'jeewan@gmail.com', '1588947464348a78338e2e053', '15887797043146a61e96fb4c1', 'f', 'kate@gmail.com');
+        */
+        const observable = new Observable(subscriber => {
+            // const query = `SELECT firstName, lastName, users.email, gender, isMember, lastLogin, profilePicture FROM users
+            //                 INNER JOIN userProfile WHERE users.email = userProfile.email
+            // `;
+            //const query = `INSERT INTO friendList values (${req.body.requester.currentUser}, '', '', 'p', ${req.body.requester.email})`;
+
+            // this.connection.query('INSERT INTO friendList SET ?', fl, function (error, results, fields) {
+
+            // });
+            let data = {
+                email: req.body.requester.currentUser,
+                uuidA: '',
+                uuidB: '',
+                status: 'p',
+                friend: req.body.requester.email
+            };
+            //const query = `INSERT INTO friendList SET ?`;
+            const query = `SELECT * FROM friendList`;
+            const arr1 = [];
+            const arr2 = [];
+            let merged = [];
+            const arr3 = req.body.requester.currentUser + req.body.requester.email;
+            this.connection.query(query, data, (err, rows) => {
+                rows.forEach((el, index) => {
+                    arr1.push({
+                        friendListId: el.friendListId,
+                        email: el.email + el.friend
+                    });
+                    arr2.push({
+                        friendListId: el.friendListId,
+                        email: el.friend + el.email
+                    });
+                });
+                // console.log(req.body.requester.currentUser + req.body.requester.email);
+                merged = arr1.concat(arr2);
+                //console.log(merged);
+                let trueFalse = '';
+                merged.forEach((item, index) => {
+                    if (item.email === arr3) {
+                        console.log(item.email, arr3, item.friendListId);
+                    } else {
+                    }
+                });
+            });
+
+            console.log(req.body.requester.currentUser);
+        });
+        return observable;
     }
 }

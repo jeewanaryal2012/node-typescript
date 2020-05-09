@@ -158,6 +158,14 @@ class JRoutes {
 
         });
 
+        this.router.post('/friend-request', this.isAuth, (req: Request, res: Response) => {
+            this.userProfile.friendRequest(req, res).subscribe(data => {
+                res.json({
+                    message: data
+                });
+            }, err => { });
+        });
+
 
 
         this.app.use('/', this.router)
