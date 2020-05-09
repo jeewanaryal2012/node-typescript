@@ -5,6 +5,8 @@ import { Request, Response } from "express";
 import * as jwt from 'jsonwebtoken';
 import Uploads from '../uploads/uploads';
 
+import * as ld from 'lodash';
+
 export default class UserProfile {
     req: Request;
     res: Response;
@@ -79,22 +81,71 @@ export default class UserProfile {
 
     mapUserFriendList(users, friendList, currentUser) {
         users.forEach((user, userIndex) => {
-            user.status = '';
+            user.status = 'na';
         });
 
+        let friends = [];
         friendList.forEach((fl, flIndex) => {
-            users.forEach((user, userIndex) => {
+            if (fl.email === currentUser || fl.friend === currentUser) {
                 if (currentUser === fl.email) {
-                    if (user.email === fl.friend) {
-                        user.status = fl.status;
-                    } else {
-                        user.status = 'x';
-                    }
+                    friends.push({
+                        email: fl.friend,
+                        status: fl.status === null ? 'na' : fl.status
+                    });
+                } else {
+                    friends.push({
+                        email: fl.email,
+                        status: fl.status === null ? 'na' : fl.status
+                    });
                 }
-            });
+            }
         });
 
-        return users;
+
+        // friends.forEach((fl, flIndex) => {
+        //     users.forEach((user, userIndex) => {
+        //         if (fl === user.email) {
+        //             user.status = 'yes';
+        //         } else {
+        //             user.status = 'no';
+        //         }
+        //     });
+        // });
+
+        // users.map((item, index) => {
+        //     friends.forEach((f, i) => {
+        //         if (item.email === f.email) {
+        //             item.status = f.status;
+        //         } else {
+        //             item.status = 'na';
+        //         }
+        //     });
+        // });
+
+
+        // friendList.forEach((fl, flIndex) => {
+        //     users.forEach((user, userIndex) => {
+        //         if (fl.email === user.email || fl.friend === user.email && user.email !== currentUser) {
+        //             user.status = 'ok';
+        //         } else {
+        //             user.status = 'not';
+        //         }
+        //     });
+        // });
+        var hash = new Map();
+        users.concat(friends).forEach(function (obj) {
+            hash.set(obj.email, Object.assign(hash.get(obj.email) || {}, obj))
+        });
+        var a3 = Array.from(hash.values());
+
+        const filteredArr = a3.filter((item, index) => {
+            return item.email !== currentUser;
+        });
+
+        return [
+            { list: filteredArr },
+            { friends: friends }
+        ];
 
     }
 }
