@@ -16,6 +16,7 @@ import login from '../login-register/login';
 import UserProfile from '../user/user-profile';
 import { v4 as uuid } from 'uuid';
 //import * as login from '../login-register/login';
+import hdb from '../db/heroku-db';
 
 const options: cors.CorsOptions = {
     allowedHeaders: ["*"],
@@ -36,6 +37,8 @@ class JRoutes {
     router = express.Router();
     userProfile = new UserProfile();
     uploads = new Uploads();
+    connection: any;
+    hdbConnection: any;
     constructor() {
         dotenv.config();
         this.app = express();
@@ -47,6 +50,9 @@ class JRoutes {
         this.router.use(cors(options));
         this.config();
         this.routes();
+
+        this.connection = db.getConnection();
+        this.hdbConnection = hdb.getConnection();
     }
 
     public app: express.Application;
@@ -164,6 +170,17 @@ class JRoutes {
                     message: data
                 });
             }, err => { });
+        });
+
+        this.router.get('/test-heroku-db', (req, res) => {
+            console.log('heroku db test');
+            let query = `SELECT * FROM kTable`;
+            this.hdbConnection.query(query, (error, results, fields) => {
+                console.log(results);
+                res.json({
+                    message: results
+                });
+            });
         });
 
 
